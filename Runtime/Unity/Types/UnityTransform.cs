@@ -1,4 +1,3 @@
-#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
 
 namespace LunyScratch
@@ -18,4 +17,3 @@ namespace LunyScratch
 		public UnityTransform(Transform transform) => _transform = transform;
 	}
 }
-#endif

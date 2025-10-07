@@ -1,4 +1,3 @@
-#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
 
 namespace LunyScratch
@@ -22,4 +21,3 @@ namespace LunyScratch
 		public UnityRigidbody(Rigidbody rigidbody) => _rigidbody = rigidbody;
 	}
 }
-#endif

@@ -1,4 +1,3 @@
-#if UNITY_6000_0_OR_NEWER
 using System;
 using UnityEngine;
 
@@ -19,4 +18,3 @@ namespace LunyScratch
 		public Vector3 ToUnity() => _value;
 	}
 }
-#endif
