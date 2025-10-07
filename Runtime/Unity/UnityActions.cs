@@ -18,6 +18,7 @@ namespace LunyScratch
 		// TIME
 		public Double GetCurrentTimeInSeconds() => Time.time;
 		public Double GetDeltaTimeInSeconds() => Time.deltaTime;
+		public Double GetFixedDeltaTimeInSeconds() => Time.fixedDeltaTime;
 
 		// INPUT - KEYBOARD
 		public Boolean IsKeyPressed(Key key)
@@ -111,6 +112,12 @@ namespace LunyScratch
 				MouseButton.Back => mouse.backButton.wasReleasedThisFrame,
 				var _ => false,
 			};
+		}
+
+		public void RotateTransform(ITransform transform, Single x, Single y, Single z)
+		{
+			var unityTransform = ((UnityTransform)transform).Transform;
+			unityTransform.Rotate(x, y, z, Space.Self);
 		}
 	}
 }
