@@ -10,10 +10,11 @@ namespace LunyScratch
 	[DefaultExecutionOrder(Int16.MinValue)]
 	[AddComponentMenu("GameObject/")] // Do not list in "Add Component" menu
 	[DisallowMultipleComponent]
-	internal sealed class ScratchRuntime : ScratchBehaviour, IEngineRuntime
+	internal sealed class ScratchRuntime : MonoBehaviour, IEngineRuntime, IScratchRunner
 	{
 		private static ScratchRuntime s_Instance;
 		private static Boolean s_Initialized;
+		private BlockRunner _runner;
 
 		public static ScratchRuntime Instance => s_Instance;
 
@@ -32,10 +33,32 @@ namespace LunyScratch
 			GameEngine.Initialize(s_Instance, new UnityActions());
 		}
 
-		protected override void OnBehaviourDestroy()
+		private void Awake() => _runner = new BlockRunner(NullScratchContext.Instance);
+
+		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
+
+		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+
+		private void OnDestroy()
 		{
+			_runner.Dispose();
 			s_Instance = null;
 			s_Initialized = false;
 		}
+
+		// IScratchRunner implementation
+		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(new SequenceBlock(blocks));
+
+		public void RunPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new SequenceBlock(blocks));
+
+		public void RepeatForever(params IScratchBlock[] blocks) => _runner.AddBlock(new RepeatForeverBlock(blocks));
+
+		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new RepeatForeverBlock(blocks));
+
+		public void RepeatWhileTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+			_runner.AddBlock(new RepeatWhileTrueBlock(condition, blocks));
+
+		public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+			_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
 	}
 }
