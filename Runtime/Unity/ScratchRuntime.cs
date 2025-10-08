@@ -61,7 +61,10 @@ namespace LunyScratch
 		// public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
 		// 	_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
 
-		public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.AddBlock(Blocks.When(condition, blocks));
+		// public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+		// 	_runner.AddBlock(Blocks.When(condition, blocks));
+
+		public void When(EventBlock evt, params IScratchBlock[] blocks) =>
+			_runner.AddBlock(Blocks.When(evt, blocks));
 	}
 }

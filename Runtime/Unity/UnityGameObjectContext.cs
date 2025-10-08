@@ -8,16 +8,17 @@ namespace LunyScratch
 	/// Unity-specific implementation of IScratchContext.
 	/// Provides component caching and child lookup for a GameObject.
 	/// </summary>
-	internal sealed class UnityGameObjectContext : IScratchContext
+	internal sealed class UnityGameObjectContext : IScratchContext, IEventContext
 	{
 		private readonly MonoBehaviour _owner;
 		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
+
+		// --- Event support (IEventContext) ---
+		private readonly List<GameObject> _collisionEnterQueue = new();
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
-
-		public UnityGameObjectContext(MonoBehaviour owner) => _owner = owner;
 
 		// IScratchContext implementation
 		public IRigidbody Rigidbody
@@ -45,6 +46,21 @@ namespace LunyScratch
 				}
 				return _cachedTransform;
 			}
+		}
+
+		public UnityGameObjectContext(MonoBehaviour owner) => _owner = owner;
+
+		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
+		{
+			for (var i = 0; i < _collisionEnterQueue.Count; i++)
+			{
+				var go = _collisionEnterQueue[i];
+				var nameOk = nameFilter == null || String.Equals(go.name, nameFilter, StringComparison.InvariantCulture);
+				var tagOk = tagFilter == null || go.CompareTag(tagFilter);
+				if (nameOk && tagOk)
+					return true;
+			}
+			return false;
 		}
 
 		public IEngineObject FindChild(String childName)
@@ -86,6 +102,12 @@ namespace LunyScratch
 			return null;
 		}
 
+		internal void EnqueueCollisionEnter(GameObject other)
+		{
+			if (other != null)
+				_collisionEnterQueue.Add(other);
+		}
+
 		public void Dispose()
 		{
 			_childrenByName.Clear();
@@ -93,6 +115,9 @@ namespace LunyScratch
 			_cachedTransform = null;
 			_rigidbodyCached = false;
 			_transformCached = false;
+			_collisionEnterQueue.Clear();
 		}
+
+		public void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
 	}
 }

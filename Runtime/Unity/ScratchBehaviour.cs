@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace LunyScratch
@@ -11,38 +10,6 @@ namespace LunyScratch
 	{
 		private BlockRunner _runner;
 		private UnityGameObjectContext _context;
-
-		private void Awake()
-		{
-			_context = new UnityGameObjectContext(this);
-			_runner = new BlockRunner(_context);
-			OnBehaviourAwake();
-		}
-
-		/// <summary>
-		/// Override this instead of Awake to handle initialization in derived classes.
-		/// </summary>
-		protected virtual void OnBehaviourAwake() {}
-
-		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
-
-		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
-
-		private void OnDestroy()
-		{
-			_runner.Dispose();
-			_context.Dispose();
-			OnBehaviourDestroy();
-		}
-
-		private void OnCollisionEnter(Collision other)
-		{
-		}
-
-		/// <summary>
-		/// Override this instead of OnDestroy to handle cleanup in derived classes.
-		/// </summary>
-		protected virtual void OnBehaviourDestroy() {}
 
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
@@ -59,7 +26,43 @@ namespace LunyScratch
 		// public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
 		// 	_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
 
-		public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.AddBlock(Blocks.When(condition, blocks));
+		// public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+		// 	_runner.AddBlock(Blocks.When(condition, blocks));
+
+		public void When(EventBlock evt, params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.When(evt, blocks));
+
+		private void Awake()
+		{
+			_context = new UnityGameObjectContext(this);
+			_runner = new BlockRunner(_context);
+			OnBehaviourAwake();
+		}
+
+		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
+
+		private void FixedUpdate()
+		{
+			_context?.ClearCollisionEventQueues();
+			_runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+		}
+
+		private void OnDestroy()
+		{
+			_runner.Dispose();
+			_context.Dispose();
+			OnBehaviourDestroy();
+		}
+
+		private void OnCollisionEnter(Collision other) => _context?.EnqueueCollisionEnter(other.gameObject);
+
+		/// <summary>
+		/// Override this instead of Awake to handle initialization in derived classes.
+		/// </summary>
+		protected virtual void OnBehaviourAwake() {}
+
+		/// <summary>
+		/// Override this instead of OnDestroy to handle cleanup in derived classes.
+		/// </summary>
+		protected virtual void OnBehaviourDestroy() {}
 	}
 }
