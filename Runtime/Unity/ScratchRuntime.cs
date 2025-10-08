@@ -33,7 +33,7 @@ namespace LunyScratch
 			GameEngine.Initialize(s_Instance, new UnityActions());
 		}
 
-		private void Awake() => _runner = new BlockRunner(NullScratchContext.Instance);
+		private void Awake() => _runner = new BlockRunner(GlobalScratchContext.Null);
 
 		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
 

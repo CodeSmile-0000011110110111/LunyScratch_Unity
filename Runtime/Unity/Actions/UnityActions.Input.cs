@@ -1,37 +1,17 @@
 ﻿using System;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace LunyScratch
 {
-	internal sealed class UnityActions : IEngineActions
+	internal sealed partial class UnityActions
 	{
-		// DEBUG
-		public void Log(String message) => Debug.Log(message);
-
-		// LOOKS
-		public void ShowMessage(String message, Double duration) => Debug.Log($"[Say] {message}");
-
-		// SOUND
-		public void PlaySound(String soundName, Double volume) => Debug.Log($"[PlaySound] {soundName} @ {volume}");
-
-		// TIME
-		public Double GetCurrentTimeInSeconds() => Time.time;
-		public Double GetDeltaTimeInSeconds() => Time.deltaTime;
-		public Double GetFixedDeltaTimeInSeconds() => Time.fixedDeltaTime;
-
-		// INPUT - KEYBOARD
 		public Boolean IsKeyPressed(Key key)
 		{
 			var keyboard = Keyboard.current;
 			if (keyboard == null) return false;
 
 			if (key == Key.Any)
-			{
-				if (keyboard.anyKey.wasPressedThisFrame)
-					Debug.Log("ANY pressed");
 				return keyboard.anyKey.isPressed;
-			}
 
 			var inputSystemKey = Remap.ToInputSystemKey(key);
 			return keyboard[inputSystemKey].isPressed;
@@ -43,11 +23,7 @@ namespace LunyScratch
 			if (keyboard == null) return false;
 
 			if (key == Key.Any)
-			{
-				if (keyboard.anyKey.wasPressedThisFrame)
-					Debug.Log("ANY just pressed");
 				return keyboard.anyKey.wasPressedThisFrame;
-			}
 
 			var inputSystemKey = Remap.ToInputSystemKey(key);
 			return keyboard[inputSystemKey].wasPressedThisFrame;
@@ -65,7 +41,6 @@ namespace LunyScratch
 			return keyboard[inputSystemKey].wasReleasedThisFrame;
 		}
 
-		// INPUT - MOUSE
 		public Boolean IsMouseButtonPressed(MouseButton button)
 		{
 			var mouse = Mouse.current;
@@ -112,12 +87,6 @@ namespace LunyScratch
 				MouseButton.Back => mouse.backButton.wasReleasedThisFrame,
 				var _ => false,
 			};
-		}
-
-		public void RotateTransform(ITransform transform, Single x, Single y, Single z)
-		{
-			var unityTransform = ((UnityTransform)transform).Transform;
-			unityTransform.Rotate(x, y, z, Space.Self);
 		}
 	}
 }
