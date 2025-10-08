@@ -1,5 +1,5 @@
-
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LunyScratch
@@ -15,6 +15,7 @@ namespace LunyScratch
 		private ITransform _cachedTransform;
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
+		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
 
 		private void Awake()
 		{
@@ -34,6 +35,7 @@ namespace LunyScratch
 		private void OnDestroy()
 		{
 			_runner.Dispose();
+			_childrenByName.Clear();
 			OnBehaviourDestroy();
 		}
 
@@ -81,6 +83,43 @@ namespace LunyScratch
 				_transformCached = true;
 			}
 			return _cachedTransform;
+		}
+
+		IEngineObject IScratchContext.FindChild(String childName)
+		{
+			// Check cache first
+			if (_childrenByName.TryGetValue(childName, out var cached))
+				return cached;
+
+			// Find in hierarchy (recursive)
+			var childTransform = transform.Find(childName);
+			
+			// If not found with simple Find, search recursively in all children
+			if (childTransform == null)
+			{
+				var allChildren = GetComponentsInChildren<Transform>(true);
+				foreach (var child in allChildren)
+				{
+					if (child.name == childName)
+					{
+						childTransform = child;
+						break;
+					}
+				}
+			}
+
+			// Cache and return
+			if (childTransform != null)
+			{
+				var engineObject = new UnityEngineObject(childTransform.gameObject);
+				_childrenByName[childName] = engineObject;
+				return engineObject;
+			}
+
+			// Cache null result to avoid repeated searches
+			_childrenByName[childName] = null;
+			Debug.LogWarning($"{gameObject.name}: could not find child named '{childName}'");
+			return null;
 		}
 	}
 }
