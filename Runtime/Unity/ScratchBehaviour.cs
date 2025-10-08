@@ -17,8 +17,8 @@ namespace LunyScratch
 
 		private void OnDestroy()
 		{
-			_runner.Dispose();
 			OnBehaviourDestroy();
+			_runner.Dispose();
 		}
 
 		/// <summary>
@@ -27,18 +27,18 @@ namespace LunyScratch
 		protected virtual void OnBehaviourDestroy() {}
 
 		// IScratchRunner implementation
-		public void Run(params IScratchBlock[] blocks) => _runner.Run(blocks);
+		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(new SequenceBlock(blocks));
 
-		public void RunPhysics(params IScratchBlock[] blocks) => _runner.RunPhysics(blocks);
+		public void RunPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new SequenceBlock(blocks));
 
-		public void RepeatForever(params IScratchBlock[] blocks) => _runner.RepeatForever(blocks);
+		public void RepeatForever(params IScratchBlock[] blocks) => _runner.AddBlock(new RepeatForeverBlock(blocks));
 
-		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => _runner.RepeatForeverPhysics(blocks);
+		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new RepeatForeverBlock(blocks));
 
 		public void RepeatWhileTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.RepeatWhileTrue(condition, blocks);
+			_runner.AddBlock(new RepeatWhileTrueBlock(condition, blocks));
 
 		public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.RepeatUntilTrue(condition, blocks);
+			_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
 	}
 }
