@@ -3,16 +3,17 @@ using UnityEngine;
 
 namespace LunyScratch
 {
+	/// <summary>
+	/// Global singleton runtime for executing Scratch blocks without GameObject context.
+	/// Automatically created and managed by Unity.
+	/// </summary>
 	[DefaultExecutionOrder(Int16.MinValue)]
 	[AddComponentMenu("GameObject/")] // Do not list in "Add Component" menu
 	[DisallowMultipleComponent]
-	public sealed class ScratchRuntime : MonoBehaviour, IEngineRuntime
+	internal sealed class ScratchRuntime : ScratchBehaviour, IEngineRuntime
 	{
 		private static ScratchRuntime s_Instance;
 		private static Boolean s_Initialized;
-
-		private readonly BlockRunner _blockRunner = new();
-		private readonly BlockRunner _physicsBlockRunner = new();
 
 		public static ScratchRuntime Instance => s_Instance;
 
@@ -31,26 +32,8 @@ namespace LunyScratch
 			GameEngine.Initialize(s_Instance, new UnityActions());
 		}
 
-		public void RunBlock(IScratchBlock block) => _blockRunner.AddBlock(block);
-
-		public void RunPhysicsBlock(IScratchBlock block) => _physicsBlockRunner.AddBlock(block);
-
-		private void Update()
+		protected override void OnBehaviourDestroy()
 		{
-			var deltaTimeInSeconds = Time.deltaTime;
-			_blockRunner.Process(deltaTimeInSeconds);
-		}
-
-		private void FixedUpdate()
-		{
-			var deltaTimeInSeconds = Time.fixedDeltaTime;
-			_physicsBlockRunner.Process(deltaTimeInSeconds);
-		}
-
-		private void OnDestroy()
-		{
-			_blockRunner.Dispose();
-			_physicsBlockRunner.Dispose();
 			s_Instance = null;
 			s_Initialized = false;
 		}
