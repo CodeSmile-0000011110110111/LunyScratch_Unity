@@ -47,18 +47,21 @@ namespace LunyScratch
 		}
 
 		// IScratchRunner implementation
-		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(new SequenceBlock(blocks));
+		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
 
-		public void RunPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new SequenceBlock(blocks));
+		public void RunPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(Blocks.Sequence(blocks));
 
-		public void RepeatForever(params IScratchBlock[] blocks) => _runner.AddBlock(new RepeatForeverBlock(blocks));
+		public void RepeatForever(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.RepeatForever(blocks));
 
-		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(new RepeatForeverBlock(blocks));
+		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => _runner.AddPhysicsBlock(Blocks.RepeatForever(blocks));
 
-		public void RepeatWhileTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.AddBlock(new RepeatWhileTrueBlock(condition, blocks));
+		// public void RepeatWhileTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+		// 	_runner.AddBlock(new RepeatWhileTrueBlock(condition, blocks));
+		//
+		// public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+		// 	_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
 
-		public void RepeatUntilTrue(Func<Boolean> condition, params IScratchBlock[] blocks) =>
-			_runner.AddBlock(new RepeatUntilTrueBlock(condition, blocks));
+		public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
+			_runner.AddBlock(Blocks.When(condition, blocks));
 	}
 }
