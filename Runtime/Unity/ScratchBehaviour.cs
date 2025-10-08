@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace LunyScratch
@@ -38,12 +39,22 @@ namespace LunyScratch
 			OnBehaviourAwake();
 		}
 
-		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
-
 		private void FixedUpdate()
 		{
-			_context?.ClearCollisionEventQueues();
 			_runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+		}
+
+		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
+
+		private void LateUpdate()
+		{
+			_context?.ClearCollisionEventQueues();
+
+			if (_context.IsScheduledForDestruction)
+			{
+				//Debug.LogWarning($"Destroying: {gameObject.name} ({gameObject.GetInstanceID()})");
+				Destroy(gameObject);
+			}
 		}
 
 		private void OnDestroy()

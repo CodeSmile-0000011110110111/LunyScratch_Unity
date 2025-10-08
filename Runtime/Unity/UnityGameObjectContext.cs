@@ -17,8 +17,12 @@ namespace LunyScratch
 		private readonly List<GameObject> _collisionEnterQueue = new();
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
+		private IAudioSource _cachedAudioSource;
+		private IEngineObject _self;
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
+		private Boolean _audioCached;
+		public Boolean IsScheduledForDestruction { get; private set; }
 
 		// IScratchContext implementation
 		public IRigidbody Rigidbody
@@ -48,8 +52,25 @@ namespace LunyScratch
 			}
 		}
 
+		public IAudioSource AudioSource
+		{
+			get
+			{
+				if (!_audioCached)
+				{
+					var src = _owner.GetComponent<AudioSource>();
+					_cachedAudioSource = src != null ? new UnityAudioSource(src) : null;
+					_audioCached = true;
+				}
+				return _cachedAudioSource;
+			}
+		}
+
+		public IEngineObject Self => _self ??= new UnityGameObject(_owner.gameObject);
+
 		public UnityGameObjectContext(MonoBehaviour owner) => _owner = owner;
 
+		
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
 			for (var i = 0; i < _collisionEnterQueue.Count; i++)
@@ -62,6 +83,8 @@ namespace LunyScratch
 			}
 			return false;
 		}
+
+		public void ScheduleDestroy() => IsScheduledForDestruction = true;
 
 		public IEngineObject FindChild(String childName)
 		{
@@ -107,17 +130,19 @@ namespace LunyScratch
 			if (other != null)
 				_collisionEnterQueue.Add(other);
 		}
+		internal void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
 
 		public void Dispose()
 		{
 			_childrenByName.Clear();
 			_cachedRigidbody = null;
 			_cachedTransform = null;
+			_cachedAudioSource = null;
+			_self = null;
 			_rigidbodyCached = false;
 			_transformCached = false;
+			_audioCached = false;
 			_collisionEnterQueue.Clear();
 		}
-
-		public void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
 	}
 }

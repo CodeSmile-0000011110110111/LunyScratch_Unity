@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace LunyScratch
 {
@@ -12,5 +13,13 @@ namespace LunyScratch
 		public UnityGameObject(GameObject gameObject) => _gameObject = gameObject;
 
 		public void SetEnabled(Boolean enabled) => _gameObject.SetActive(enabled);
+
+		// public void ScheduleDestroy(Double delayInSeconds = 0.0)
+		// {
+		// 	if (delayInSeconds > 0.0)
+		// 		Object.Destroy(_gameObject, (Single)delayInSeconds);
+		// 	else
+		// 		Object.Destroy(_gameObject);
+		// }
 	}
 }
