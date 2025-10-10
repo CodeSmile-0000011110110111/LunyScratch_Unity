@@ -36,7 +36,7 @@ namespace LunyScratch
 
 		private void Awake()
 		{
-			_context = new ScratchBehaviourContext(this);
+			_context = this is ScratchRuntime ? new ScratchRuntimeContext(this) : new ScratchBehaviourContext(this);
 			_runner = new BlockRunner(_context);
 			OnBehaviourAwake();
 		}

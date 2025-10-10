@@ -1,13 +1,8 @@
-using UnityEngine;
-
 namespace LunyScratch
 {
-	internal sealed class UnityRuntimeContext : ScratchBehaviourContext
+	internal sealed class ScratchRuntimeContext : ScratchBehaviourContext
 	{
-		public UnityRuntimeContext(MonoBehaviour owner)
-			: base(owner)
-		{
-			_isRuntimeContext = true;
-		}
+		public ScratchRuntimeContext(ScratchBehaviour owner)
+			: base(owner) => _isRuntimeContext = true;
 	}
 }

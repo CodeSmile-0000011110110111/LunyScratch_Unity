@@ -8,9 +8,9 @@ namespace LunyScratch
 	/// Unity-specific implementation of IScratchContext.
 	/// Provides component caching and child lookup for a GameObject.
 	/// </summary>
-	internal class ScratchBehaviourContext : IScratchContext, IEventContext
+	internal class ScratchBehaviourContext : IScratchContext
 	{
-		private readonly MonoBehaviour _owner;
+		private readonly ScratchBehaviour _owner;
 		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
 
 		private readonly List<GameObject> _collisionEnterQueue = new();
@@ -24,6 +24,7 @@ namespace LunyScratch
 		private Boolean _audioCached;
 		public Boolean IsScheduledForDestruction { get; private set; }
 
+		public IScratchRunner Runner => _owner;
 		public IRigidbody Rigidbody
 		{
 			get
@@ -73,7 +74,7 @@ namespace LunyScratch
 
 		public IEngineObject Self => _self ??= new UnityGameObject(_owner.gameObject);
 
-		public ScratchBehaviourContext(MonoBehaviour owner) => _owner = owner;
+		public ScratchBehaviourContext(ScratchBehaviour owner) => _owner = owner;
 
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
