@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace LunyScratch
 {
-	internal sealed class UnityAudioSource : IAudioSource
+	internal sealed class UnityEngineAudio : IEngineAudio
 	{
 		private readonly AudioSource _audioSource;
 
-		public UnityAudioSource(AudioSource audioSource) => _audioSource = audioSource;
+		public UnityEngineAudio(AudioSource audioSource) => _audioSource = audioSource;
 
 		public void Play() => _audioSource.Play();
 	}

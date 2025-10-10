@@ -8,27 +8,29 @@ namespace LunyScratch
 	/// Unity-specific implementation of IScratchContext.
 	/// Provides component caching and child lookup for a GameObject.
 	/// </summary>
-	internal sealed class UnityGameObjectContext : IScratchContext, IEventContext
+	internal class ScratchBehaviourContext : IScratchContext, IEventContext
 	{
 		private readonly MonoBehaviour _owner;
 		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
 
-		// --- Event support (IEventContext) ---
 		private readonly List<GameObject> _collisionEnterQueue = new();
+		protected Boolean _isRuntimeContext;
+		private IEngineObject _self;
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
-		private IAudioSource _cachedAudioSource;
-		private IEngineObject _self;
+		private IEngineAudio _cachedAudio;
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
 		private Boolean _audioCached;
 		public Boolean IsScheduledForDestruction { get; private set; }
 
-		// IScratchContext implementation
 		public IRigidbody Rigidbody
 		{
 			get
 			{
+				if (_isRuntimeContext)
+					throw new Exception("Runtime context does not have Rigidbody");
+
 				if (!_rigidbodyCached)
 				{
 					var rb = _owner.GetComponent<Rigidbody>();
@@ -43,6 +45,9 @@ namespace LunyScratch
 		{
 			get
 			{
+				if (_isRuntimeContext)
+					throw new Exception("Runtime context does not have Transform");
+
 				if (!_transformCached)
 				{
 					_cachedTransform = new UnityTransform(_owner.transform);
@@ -52,23 +57,23 @@ namespace LunyScratch
 			}
 		}
 
-		public IAudioSource AudioSource
+		public IEngineAudio Audio
 		{
 			get
 			{
 				if (!_audioCached)
 				{
 					var src = _owner.GetComponent<AudioSource>();
-					_cachedAudioSource = src != null ? new UnityAudioSource(src) : null;
+					_cachedAudio = src != null ? new UnityEngineAudio(src) : null;
 					_audioCached = true;
 				}
-				return _cachedAudioSource;
+				return _cachedAudio;
 			}
 		}
 
 		public IEngineObject Self => _self ??= new UnityGameObject(_owner.gameObject);
 
-		public UnityGameObjectContext(MonoBehaviour owner) => _owner = owner;
+		public ScratchBehaviourContext(MonoBehaviour owner) => _owner = owner;
 
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
@@ -87,6 +92,9 @@ namespace LunyScratch
 
 		public IEngineObject FindChild(String childName)
 		{
+			if (_isRuntimeContext)
+				throw new Exception("Runtime context does not have children");
+
 			// Check cache first
 			if (_childrenByName.TryGetValue(childName, out var cached))
 				return cached;
@@ -130,18 +138,22 @@ namespace LunyScratch
 				_collisionEnterQueue.Add(other);
 		}
 
-		internal void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
+		public void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
 
 		public void Dispose()
 		{
-			_childrenByName.Clear();
-			_cachedRigidbody = null;
-			_cachedTransform = null;
-			_cachedAudioSource = null;
 			_self = null;
+
+			_cachedRigidbody = null;
 			_rigidbodyCached = false;
+
+			_cachedTransform = null;
 			_transformCached = false;
+
+			_cachedAudio = null;
 			_audioCached = false;
+
+			_childrenByName.Clear();
 			_collisionEnterQueue.Clear();
 		}
 	}

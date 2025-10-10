@@ -8,8 +8,11 @@ namespace LunyScratch
 	/// </summary>
 	public abstract class ScratchBehaviour : MonoBehaviour, IScratchRunner
 	{
+		private readonly Table _variables = new();
 		private BlockRunner _runner;
-		private UnityGameObjectContext _context;
+		private ScratchBehaviourContext _context;
+
+		public Table Variables => _variables;
 
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
@@ -33,7 +36,7 @@ namespace LunyScratch
 
 		private void Awake()
 		{
-			_context = new UnityGameObjectContext(this);
+			_context = new ScratchBehaviourContext(this);
 			_runner = new BlockRunner(_context);
 			OnBehaviourAwake();
 		}
