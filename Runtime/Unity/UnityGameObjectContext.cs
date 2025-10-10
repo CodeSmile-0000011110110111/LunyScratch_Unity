@@ -70,7 +70,6 @@ namespace LunyScratch
 
 		public UnityGameObjectContext(MonoBehaviour owner) => _owner = owner;
 
-		
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
 			for (var i = 0; i < _collisionEnterQueue.Count; i++)
@@ -130,6 +129,7 @@ namespace LunyScratch
 			if (other != null)
 				_collisionEnterQueue.Add(other);
 		}
+
 		internal void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
 
 		public void Dispose()

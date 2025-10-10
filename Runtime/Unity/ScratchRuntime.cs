@@ -33,19 +33,6 @@ namespace LunyScratch
 			GameEngine.Initialize(s_Instance, new UnityActions());
 		}
 
-		private void Awake() => _runner = new BlockRunner(GlobalScratchContext.Null);
-
-		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
-
-		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
-
-		private void OnDestroy()
-		{
-			_runner.Dispose();
-			s_Instance = null;
-			s_Initialized = false;
-		}
-
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
 
@@ -64,7 +51,19 @@ namespace LunyScratch
 		// public void When(Func<Boolean> condition, params IScratchBlock[] blocks) =>
 		// 	_runner.AddBlock(Blocks.When(condition, blocks));
 
-		public void When(EventBlock evt, params IScratchBlock[] blocks) =>
-			_runner.AddBlock(Blocks.When(evt, blocks));
+		public void When(EventBlock evt, params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.When(evt, blocks));
+
+		private void Awake() => _runner = new BlockRunner(GlobalScratchContext.Null);
+
+		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
+
+		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+
+		private void OnDestroy()
+		{
+			_runner.Dispose();
+			s_Instance = null;
+			s_Initialized = false;
+		}
 	}
 }

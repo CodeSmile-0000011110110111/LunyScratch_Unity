@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace LunyScratch
@@ -39,10 +38,7 @@ namespace LunyScratch
 			OnBehaviourAwake();
 		}
 
-		private void FixedUpdate()
-		{
-			_runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
-		}
+		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
 
 		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
 
