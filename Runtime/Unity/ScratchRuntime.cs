@@ -38,7 +38,9 @@ namespace LunyScratch
 			s_Instance = go.AddComponent<ScratchRuntime>();
 			DontDestroyOnLoad(go);
 
-			GameEngine.Initialize(s_Instance, new UnityActions());
+			// Load AssetRegistry from Resources and pass it to GameEngine
+			var registry = Resources.Load<UnityAssetRegistry>("AssetRegistry");
+			GameEngine.Initialize(s_Instance, new UnityActions(), registry);
 		}
 	}
 }
