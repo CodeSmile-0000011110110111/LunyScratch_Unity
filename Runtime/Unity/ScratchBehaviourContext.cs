@@ -12,9 +12,8 @@ namespace LunyScratch
 	{
 		private readonly ScratchBehaviour _owner;
 		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
-
 		private readonly List<GameObject> _collisionEnterQueue = new();
-		protected Boolean _isRuntimeContext;
+
 		private IEngineObject _self;
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
@@ -22,6 +21,7 @@ namespace LunyScratch
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
 		private Boolean _audioCached;
+		protected Boolean _isRuntimeContext;
 		public Boolean IsScheduledForDestruction { get; private set; }
 
 		public IScratchRunner Runner => _owner;
