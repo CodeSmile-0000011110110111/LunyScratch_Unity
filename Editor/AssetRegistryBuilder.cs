@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -30,6 +31,28 @@ namespace LunyScratch.Editor
 				BuildOrUpdate();
 		}
 
+		private static String NormalizePath(String path)
+		{
+			if (String.IsNullOrEmpty(path))
+				return path;
+
+			// Ensure forward slashes (Unity asset paths use '/')
+			var normalized = path.Replace('\\', '/');
+
+			// Strip file extension
+			var ext = Path.GetExtension(normalized);
+			if (!String.IsNullOrEmpty(ext))
+				normalized = normalized.Substring(0, normalized.Length - ext.Length);
+
+			// Remove RootFolder prefix
+			if (normalized.StartsWith(RootFolder, StringComparison.OrdinalIgnoreCase))
+				normalized = normalized.Substring(RootFolder.Length);
+
+			// Trim any leading/trailing separators
+			normalized = normalized.Trim('/');
+			return normalized;
+		}
+
 		private static void BuildOrUpdate()
 		{
 			TryCreateFolders();
@@ -48,11 +71,11 @@ namespace LunyScratch.Editor
 			// Prefabs (GameObjects)
 			foreach (var guid in AssetDatabase.FindAssets("t:GameObject", new[] { RootFolder }))
 			{
-				var path = AssetDatabase.GUIDToAssetPath(guid);
-				var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+				var fullPath = AssetDatabase.GUIDToAssetPath(guid);
+				var go = AssetDatabase.LoadAssetAtPath<GameObject>(fullPath);
 				if (go != null)
 				{
-					Debug.Log($"Adding prefab {go} at path: {path}");
+					var path = NormalizePath(fullPath);
 					prefabItems.Add((path, new UnityPrefabAsset(go)));
 				}
 			}
@@ -60,19 +83,25 @@ namespace LunyScratch.Editor
 			// UI (UXML VisualTreeAssets)
 			foreach (var guid in AssetDatabase.FindAssets("t:VisualTreeAsset", new[] { RootFolder }))
 			{
-				var path = AssetDatabase.GUIDToAssetPath(guid);
-				var ui = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
+				var fullPath = AssetDatabase.GUIDToAssetPath(guid);
+				var ui = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(fullPath);
 				if (ui != null)
+				{
+					var path = NormalizePath(fullPath);
 					uiItems.Add((path, new UnityUIAsset(ui)));
+				}
 			}
 
 			// Audio (AudioClips)
 			foreach (var guid in AssetDatabase.FindAssets("t:AudioClip", new[] { RootFolder }))
 			{
-				var path = AssetDatabase.GUIDToAssetPath(guid);
-				var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+				var fullPath = AssetDatabase.GUIDToAssetPath(guid);
+				var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(fullPath);
 				if (clip != null)
+				{
+					var path = NormalizePath(fullPath);
 					audioItems.Add((path, new UnityAudioAsset(clip)));
+				}
 			}
 
 			registry.SetPrefabsForEditor(prefabItems);

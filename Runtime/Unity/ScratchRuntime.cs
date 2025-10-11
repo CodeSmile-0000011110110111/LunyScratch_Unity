@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LunyScratch
 {
@@ -9,20 +10,24 @@ namespace LunyScratch
 	[DefaultExecutionOrder(Int16.MinValue)]
 	[AddComponentMenu("GameObject/")] // Do not list in "Add Component" menu
 	[DisallowMultipleComponent]
-	internal sealed class ScratchRuntime : ScratchBehaviour, IEngineRuntime
+	public sealed class ScratchRuntime : ScratchBehaviour, IEngineRuntime
 	{
 		private static ScratchRuntime s_Instance;
 		private static Boolean s_Initialized;
 
+		private ScratchHUD _scratchHUD;
+
 		public static ScratchRuntime Instance => s_Instance;
+		public ScratchHUD ScratchHUD { get => _scratchHUD == null ? _scratchHUD = TryFindHUD() : _scratchHUD; set => _scratchHUD = value; }
 
 #if UNITY_EDITOR
-		// required for 'disabled domain reload'
+		// required reset for 'disabled domain reload'
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 		private static void InitializeBeforeSceneLoad()
 		{
 			s_Instance = null;
 			s_Initialized = false;
+			GC.Collect();
 		}
 #endif
 
@@ -41,6 +46,44 @@ namespace LunyScratch
 			// Load AssetRegistry from Resources and pass it to GameEngine
 			var registry = Resources.Load<UnityAssetRegistry>("AssetRegistry");
 			GameEngine.Initialize(s_Instance, new UnityActions(), registry);
+
+			SceneManager.activeSceneChanged += OnActiveSceneChanged;
+			SceneManager.sceneUnloaded += OnSceneUnloaded;
+			SceneManager.sceneLoaded += OnSceneLoaded;
+		}
+
+		private static void OnSceneLoaded(Scene loadedScene, LoadSceneMode loadMode)
+		{
+			Debug.Log($"OnSceneLoaded: {loadedScene} with mode={loadMode}");
+		}
+
+		private static void OnSceneUnloaded(Scene unloadedScene)
+		{
+			Debug.Log($"OnSceneUnloaded: {unloadedScene}");
+		}
+
+		private static void OnActiveSceneChanged(Scene previousScene, Scene activeScene)
+		{
+			Debug.Log($"OnActiveSceneChanged from {previousScene} to {activeScene}");
+		}
+
+		private ScratchHUD TryFindHUD()
+		{
+			var huds = FindObjectsByType<ScratchHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+			if (huds.Length > 0)
+			{
+				if (huds.Length > 1)
+					Debug.LogWarning($"Multiple {nameof(ScratchHUD)} instances found in scene! Will use first active one.");
+
+				foreach (var hud in huds)
+				{
+					if (hud.enabled && hud.gameObject.activeInHierarchy)
+						return hud;
+				}
+			}
+
+			Debug.LogError($"No active {nameof(ScratchHUD)} instance found in scene");
+			return null;
 		}
 	}
 }
