@@ -16,14 +16,11 @@ namespace LunyScratch
 
 		public void QuitApplication()
 		{
-#if UNITY_EDITOR
-			if (Application.isEditor)
-			{
-				EditorApplication.ExitPlaymode();
-				return;
-			}
-#endif
 			Application.Quit();
+
+#if UNITY_EDITOR
+			EditorApplication.ExitPlaymode();
+#endif
 		}
 	}
 }
