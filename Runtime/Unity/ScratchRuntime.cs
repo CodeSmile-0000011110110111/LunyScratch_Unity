@@ -15,10 +15,7 @@ namespace LunyScratch
 		private static ScratchRuntime s_Instance;
 		private static Boolean s_Initialized;
 
-		private ScratchHUD _scratchHUD;
-
-		public static ScratchRuntime Instance => s_Instance;
-		public ScratchHUD ScratchHUD { get => _scratchHUD == null ? _scratchHUD = TryFindHUD() : _scratchHUD; set => _scratchHUD = value; }
+		public static ScratchRuntime Singleton => s_Instance;
 
 #if UNITY_EDITOR
 		// required reset for 'disabled domain reload'
@@ -52,38 +49,19 @@ namespace LunyScratch
 			SceneManager.sceneLoaded += OnSceneLoaded;
 		}
 
-		private static void OnSceneLoaded(Scene loadedScene, LoadSceneMode loadMode)
-		{
+		private static void OnSceneLoaded(Scene loadedScene, LoadSceneMode loadMode) =>
 			Debug.Log($"OnSceneLoaded: {loadedScene} with mode={loadMode}");
-		}
 
-		private static void OnSceneUnloaded(Scene unloadedScene)
-		{
-			Debug.Log($"OnSceneUnloaded: {unloadedScene}");
-		}
+		private static void OnSceneUnloaded(Scene unloadedScene) => Debug.Log($"OnSceneUnloaded: {unloadedScene}");
 
-		private static void OnActiveSceneChanged(Scene previousScene, Scene activeScene)
-		{
+		private static void OnActiveSceneChanged(Scene previousScene, Scene activeScene) =>
 			Debug.Log($"OnActiveSceneChanged from {previousScene} to {activeScene}");
-		}
 
-		private ScratchHUD TryFindHUD()
+		protected override void OnBehaviourDestroy()
 		{
-			var huds = FindObjectsByType<ScratchHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-			if (huds.Length > 0)
-			{
-				if (huds.Length > 1)
-					Debug.LogWarning($"Multiple {nameof(ScratchHUD)} instances found in scene! Will use first active one.");
-
-				foreach (var hud in huds)
-				{
-					if (hud.enabled && hud.gameObject.activeInHierarchy)
-						return hud;
-				}
-			}
-
-			Debug.LogError($"No active {nameof(ScratchHUD)} instance found in scene");
-			return null;
+			SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+			SceneManager.sceneUnloaded -= OnSceneUnloaded;
+			SceneManager.sceneLoaded -= OnSceneLoaded;
 		}
 	}
 }

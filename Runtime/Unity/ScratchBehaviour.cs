@@ -11,8 +11,20 @@ namespace LunyScratch
 		private readonly Table _variables = new();
 		private BlockRunner _runner;
 		private ScratchBehaviourContext _context;
+		private ScratchHUD _scratchHUD;
+		private ScratchMenu _scratchMenu;
 
 		public Table Variables => _variables;
+		public ScratchHUD HUD
+		{
+			get => _scratchHUD == null ? _scratchHUD = TryFindSingleComponentInScene<ScratchHUD>() : _scratchHUD;
+			set => _scratchHUD = value;
+		}
+		public ScratchMenu Menu
+		{
+			get => _scratchMenu == null ? _scratchMenu = TryFindSingleComponentInScene<ScratchMenu>() : _scratchMenu;
+			set => _scratchMenu = value;
+		}
 
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
@@ -74,5 +86,22 @@ namespace LunyScratch
 		/// Override this instead of OnDestroy to handle cleanup in derived classes.
 		/// </summary>
 		protected virtual void OnBehaviourDestroy() {}
+
+		protected T TryFindSingleComponentInScene<T>() where T : Component
+		{
+			var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+			Debug.Log($"Try find {typeof(T)}, found: {components.Length}");
+			if (components.Length > 0)
+			{
+				var moreThanOne = components.Length > 1;
+				if (moreThanOne)
+					Debug.LogWarning($"More than one {nameof(T)} found in scene");
+
+				return components[0];
+			}
+
+			Debug.LogError($"No {nameof(T)} found in scene");
+			return null;
+		}
 	}
 }

@@ -76,6 +76,10 @@ namespace LunyScratch
 
 		public ScratchBehaviourContext(ScratchBehaviour owner) => _owner = owner;
 
+		public IEngineHUD GetEngineHUD() => _owner?.HUD;
+
+		public IEngineMenu GetEngineMenu() => _owner?.Menu;
+
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
 			for (var i = 0; i < _collisionEnterQueue.Count; i++)
