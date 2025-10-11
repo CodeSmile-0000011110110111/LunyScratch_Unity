@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace LunyScratch
@@ -53,9 +54,25 @@ namespace LunyScratch
 			OnBehaviourAwake();
 		}
 
-		private void FixedUpdate() => _runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+		private void FixedUpdate()
+		{
+			_runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
+			OnFixedUpdate(Time.fixedDeltaTime);
+		}
 
-		private void Update() => _runner.ProcessUpdate(Time.deltaTime);
+		protected virtual void OnFixedUpdate(Single fixedDeltaTime)
+		{
+		}
+
+		private void Update()
+		{
+			_runner.ProcessUpdate(Time.deltaTime);
+			OnUpdate(Time.deltaTime);
+		}
+
+		protected virtual void OnUpdate(Single deltaTime)
+		{
+		}
 
 		private void LateUpdate()
 		{
@@ -66,6 +83,11 @@ namespace LunyScratch
 				//Debug.LogWarning($"Destroying: {gameObject.name} ({gameObject.GetInstanceID()})");
 				Destroy(gameObject);
 			}
+			OnLateUpdate();
+		}
+
+		protected virtual void OnLateUpdate()
+		{
 		}
 
 		private void OnDestroy()
