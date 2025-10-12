@@ -18,10 +18,15 @@ internal sealed class UIVariableBinding
 
 	public void Dispose() => _variable.OnValueChanged -= OnValueChanged;
 
-	private void OnValueChanged(Variable obj)
+	private void OnValueChanged(Variable variable)
 	{
 		if (_element is Label label)
-			label.text = obj.AsString();
+		{
+			if (variable.IsNumber)
+				label.text = variable.AsNumber().ToString("N0");
+			else
+				label.text = variable.AsString();
+		}
 		else
 			Debug.LogWarning($"Unsupported UI element type: {_element.GetType()}");
 	}
