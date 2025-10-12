@@ -12,7 +12,7 @@ namespace LunyScratch
 	{
 		private readonly ScratchBehaviour _owner;
 		private readonly Dictionary<String, IEngineObject> _childrenByName = new();
-		private readonly List<GameObject> _collisionEnterQueue = new();
+		private readonly HashSet<GameObject> _collisionEnterQueue = new();
 
 		private IEngineObject _self;
 		private IRigidbody _cachedRigidbody;
@@ -82,11 +82,10 @@ namespace LunyScratch
 
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
-			for (var i = 0; i < _collisionEnterQueue.Count; i++)
+			foreach (var other in _collisionEnterQueue)
 			{
-				var go = _collisionEnterQueue[i];
-				var nameOk = nameFilter == null || String.Equals(go.name, nameFilter, StringComparison.InvariantCulture);
-				var tagOk = tagFilter == null || go.CompareTag(tagFilter);
+				var nameOk = nameFilter == null || String.Equals(other.name, nameFilter, StringComparison.InvariantCulture);
+				var tagOk = tagFilter == null || other.CompareTag(tagFilter);
 				if (nameOk && tagOk)
 					return true;
 			}
