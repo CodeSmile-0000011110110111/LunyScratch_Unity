@@ -81,6 +81,8 @@ namespace LunyScratch
 
 		public IEngineMenu GetEngineMenu() => _owner?.Menu;
 
+		public void SetSelfComponentEnabled(Boolean enabled) => _owner.enabled = enabled;
+
 		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
 		{
 			foreach (var other in _collisionEnterQueue)
