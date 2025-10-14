@@ -18,12 +18,12 @@ namespace LunyScratch
 		public Table Variables => _variables;
 		public ScratchHUD HUD
 		{
-			get => _scratchHUD == null ? _scratchHUD = TryFindSingleComponentInScene<ScratchHUD>() : _scratchHUD;
+			get => _scratchHUD == null ? _scratchHUD = TryFindSingletonComponentInScene<ScratchHUD>() : _scratchHUD;
 			set => _scratchHUD = value;
 		}
 		public ScratchMenu Menu
 		{
-			get => _scratchMenu == null ? _scratchMenu = TryFindSingleComponentInScene<ScratchMenu>() : _scratchMenu;
+			get => _scratchMenu == null ? _scratchMenu = TryFindSingletonComponentInScene<ScratchMenu>() : _scratchMenu;
 			set => _scratchMenu = value;
 		}
 
@@ -109,10 +109,9 @@ namespace LunyScratch
 		/// </summary>
 		protected virtual void OnBehaviourDestroy() {}
 
-		protected T TryFindSingleComponentInScene<T>() where T : Component
+		protected T TryFindSingletonComponentInScene<T>() where T : Component
 		{
 			var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-			Debug.Log($"Try find {typeof(T)}, found: {components.Length}");
 			if (components.Length > 0)
 			{
 				var moreThanOne = components.Length > 1;
