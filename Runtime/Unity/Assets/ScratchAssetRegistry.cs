@@ -10,48 +10,48 @@ namespace LunyScratch
 	/// ScriptableObject that stores mappings from asset paths to engine-specific asset wrappers.
 	/// Built/updated by editor scripts and used at runtime for fast lookups.
 	/// </summary>
-	public sealed class UnityAssetRegistry : ScriptableObject, AssetRegistry.IAssetRegistry
+	public sealed class ScratchAssetRegistry : ScriptableObject, AssetRegistry.IAssetRegistry
 	{
 		[SerializeField] private List<PrefabEntry> _prefabs = new();
 		[SerializeField] private List<UIEntry> _ui = new();
 		[SerializeField] private List<AudioEntry> _audio = new();
 
 		// Optional placeholders to return when requested asset is missing.
-		[SerializeField] private UnityPrefabAsset _defaultPrefab;
-		[SerializeField] private UnityUIAsset _defaultUI;
-		[SerializeField] private UnityAudioAsset _defaultAudio;
+		[SerializeField] private ScratchPrefabAsset _defaultPrefab;
+		[SerializeField] private ScratchUIAsset _defaultUI;
+		[SerializeField] private ScratchAudioAsset _defaultAudio;
 
-		[NonSerialized] private Dictionary<String, UnityPrefabAsset> _prefabMap;
-		[NonSerialized] private Dictionary<String, UnityUIAsset> _uiMap;
-		[NonSerialized] private Dictionary<String, UnityAudioAsset> _audioMap;
+		[NonSerialized] private Dictionary<String, ScratchPrefabAsset> _prefabMap;
+		[NonSerialized] private Dictionary<String, ScratchUIAsset> _uiMap;
+		[NonSerialized] private Dictionary<String, ScratchAudioAsset> _audioMap;
 
 		// Expose for editor builder
-		public List<(String path, UnityPrefabAsset asset)> PrefabsForEditor
+		public List<(String path, ScratchPrefabAsset asset)> PrefabsForEditor
 		{
 			get
 			{
-				var list = new List<(String, UnityPrefabAsset)>(_prefabs.Count);
+				var list = new List<(String, ScratchPrefabAsset)>(_prefabs.Count);
 				foreach (var e in _prefabs) list.Add((e.Path, e.Asset));
 				return list;
 			}
 		}
 
-		public List<(String path, UnityUIAsset asset)> UIForEditor
+		public List<(String path, ScratchUIAsset asset)> UIForEditor
 		{
 			get
 			{
-				var list = new List<(String, UnityUIAsset)>(_ui.Count);
+				var list = new List<(String, ScratchUIAsset)>(_ui.Count);
 				foreach (var e in _ui)
 					list.Add((e.Path, e.Asset));
 				return list;
 			}
 		}
 
-		public List<(String path, UnityAudioAsset asset)> AudioForEditor
+		public List<(String path, ScratchAudioAsset asset)> AudioForEditor
 		{
 			get
 			{
-				var list = new List<(String, UnityAudioAsset)>(_audio.Count);
+				var list = new List<(String, ScratchAudioAsset)>(_audio.Count);
 				foreach (var e in _audio)
 					list.Add((e.Path, e.Asset));
 				return list;
@@ -67,13 +67,13 @@ namespace LunyScratch
 
 		public T Get<T>(String path) where T : class, IEngineAsset
 		{
-			if (typeof(T) == typeof(IEnginePrefabAsset) || typeof(T) == typeof(UnityPrefabAsset))
+			if (typeof(T) == typeof(IEnginePrefabAsset) || typeof(T) == typeof(ScratchPrefabAsset))
 				return TryGet(_prefabMap, path) as T;
 
-			if (typeof(T) == typeof(IEngineUIAsset) || typeof(T) == typeof(UnityUIAsset))
+			if (typeof(T) == typeof(IEngineUIAsset) || typeof(T) == typeof(ScratchUIAsset))
 				return TryGet(_uiMap, path) as T;
 
-			if (typeof(T) == typeof(IEngineAudioAsset) || typeof(T) == typeof(UnityAudioAsset))
+			if (typeof(T) == typeof(IEngineAudioAsset) || typeof(T) == typeof(ScratchAudioAsset))
 				return TryGet(_audioMap, path) as T;
 
 			return null;
@@ -81,11 +81,11 @@ namespace LunyScratch
 
 		public IEngineAsset Get(String path, Type assetType)
 		{
-			if (assetType == typeof(IEnginePrefabAsset) || assetType == typeof(UnityPrefabAsset))
+			if (assetType == typeof(IEnginePrefabAsset) || assetType == typeof(ScratchPrefabAsset))
 				return TryGet(_prefabMap, path);
-			if (assetType == typeof(IEngineUIAsset) || assetType == typeof(UnityUIAsset))
+			if (assetType == typeof(IEngineUIAsset) || assetType == typeof(ScratchUIAsset))
 				return TryGet(_uiMap, path);
-			if (assetType == typeof(IEngineAudioAsset) || assetType == typeof(UnityAudioAsset))
+			if (assetType == typeof(IEngineAudioAsset) || assetType == typeof(ScratchAudioAsset))
 				return TryGet(_audioMap, path);
 
 			return null;
@@ -93,11 +93,11 @@ namespace LunyScratch
 
 		public T GetPlaceholder<T>() where T : class, IEngineAsset
 		{
-			if (typeof(T) == typeof(IEnginePrefabAsset) || typeof(T) == typeof(UnityPrefabAsset))
+			if (typeof(T) == typeof(IEnginePrefabAsset) || typeof(T) == typeof(ScratchPrefabAsset))
 				return _defaultPrefab as T;
-			if (typeof(T) == typeof(IEngineUIAsset) || typeof(T) == typeof(UnityUIAsset))
+			if (typeof(T) == typeof(IEngineUIAsset) || typeof(T) == typeof(ScratchUIAsset))
 				return _defaultUI as T;
-			if (typeof(T) == typeof(IEngineAudioAsset) || typeof(T) == typeof(UnityAudioAsset))
+			if (typeof(T) == typeof(IEngineAudioAsset) || typeof(T) == typeof(ScratchAudioAsset))
 				return _defaultAudio as T;
 
 			return null;
@@ -105,11 +105,11 @@ namespace LunyScratch
 
 		public IEngineAsset GetPlaceholder(Type assetType)
 		{
-			if (assetType == typeof(IEnginePrefabAsset) || assetType == typeof(UnityPrefabAsset))
+			if (assetType == typeof(IEnginePrefabAsset) || assetType == typeof(ScratchPrefabAsset))
 				return _defaultPrefab;
-			if (assetType == typeof(IEngineUIAsset) || assetType == typeof(UnityUIAsset))
+			if (assetType == typeof(IEngineUIAsset) || assetType == typeof(ScratchUIAsset))
 				return _defaultUI;
-			if (assetType == typeof(IEngineAudioAsset) || assetType == typeof(UnityAudioAsset))
+			if (assetType == typeof(IEngineAudioAsset) || assetType == typeof(ScratchAudioAsset))
 				return _defaultAudio;
 
 			return null;
@@ -119,37 +119,37 @@ namespace LunyScratch
 
 		public void BuildDictionaries()
 		{
-			_prefabMap = new Dictionary<String, UnityPrefabAsset>(StringComparer.OrdinalIgnoreCase);
+			_prefabMap = new Dictionary<String, ScratchPrefabAsset>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in _prefabs)
 				if (!String.IsNullOrEmpty(e?.Path))
 					_prefabMap[e.Path] = e.Asset;
 
-			_uiMap = new Dictionary<String, UnityUIAsset>(StringComparer.OrdinalIgnoreCase);
+			_uiMap = new Dictionary<String, ScratchUIAsset>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in _ui)
 				if (!String.IsNullOrEmpty(e?.Path))
 					_uiMap[e.Path] = e.Asset;
 
-			_audioMap = new Dictionary<String, UnityAudioAsset>(StringComparer.OrdinalIgnoreCase);
+			_audioMap = new Dictionary<String, ScratchAudioAsset>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in _audio)
 				if (!String.IsNullOrEmpty(e?.Path))
 					_audioMap[e.Path] = e.Asset;
 		}
 
-		public void SetPrefabsForEditor(List<(String path, UnityPrefabAsset asset)> items)
+		public void SetPrefabsForEditor(List<(String path, ScratchPrefabAsset asset)> items)
 		{
 			_prefabs.Clear();
 			foreach (var (path, asset) in items)
 				_prefabs.Add(new PrefabEntry { Path = path, Asset = asset });
 		}
 
-		public void SetUIForEditor(List<(String path, UnityUIAsset asset)> items)
+		public void SetUIForEditor(List<(String path, ScratchUIAsset asset)> items)
 		{
 			_ui.Clear();
 			foreach (var (path, asset) in items)
 				_ui.Add(new UIEntry { Path = path, Asset = asset });
 		}
 
-		public void SetAudioForEditor(List<(String path, UnityAudioAsset asset)> items)
+		public void SetAudioForEditor(List<(String path, ScratchAudioAsset asset)> items)
 		{
 			_audio.Clear();
 			foreach (var (path, asset) in items)
@@ -159,19 +159,19 @@ namespace LunyScratch
 		[Serializable] private sealed class PrefabEntry
 		{
 			public String Path;
-			public UnityPrefabAsset Asset;
+			public ScratchPrefabAsset Asset;
 		}
 
 		[Serializable] private sealed class UIEntry
 		{
 			public String Path;
-			public UnityUIAsset Asset;
+			public ScratchUIAsset Asset;
 		}
 
 		[Serializable] private sealed class AudioEntry
 		{
 			public String Path;
-			public UnityAudioAsset Asset;
+			public ScratchAudioAsset Asset;
 		}
 	}
 }

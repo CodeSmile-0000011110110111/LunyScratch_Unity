@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace LunyScratch
@@ -5,14 +6,14 @@ namespace LunyScratch
 	/// <summary>
 	/// Unity implementation of a prefab asset wrapper.
 	/// </summary>
-	[System.Serializable]
- public sealed class UnityPrefabAsset : IEnginePrefabAsset
+	[Serializable]
+	public sealed class ScratchPrefabAsset : IEnginePrefabAsset
 	{
 		[SerializeField] private GameObject _prefab;
 
-		public UnityPrefabAsset() { }
-		public UnityPrefabAsset(GameObject prefab) { _prefab = prefab; }
-
 		public GameObject Prefab => _prefab;
+
+		public ScratchPrefabAsset() {}
+		public ScratchPrefabAsset(GameObject prefab) => _prefab = prefab;
 	}
 }

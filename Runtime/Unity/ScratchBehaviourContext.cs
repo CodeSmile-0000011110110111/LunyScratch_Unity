@@ -17,7 +17,7 @@ namespace LunyScratch
 		private IEngineObject _self;
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
-		private IEngineAudio _cachedAudio;
+		private IEngineAudioSource _cachedAudio;
 		private Boolean _rigidbodyCached;
 		private Boolean _transformCached;
 		private Boolean _audioCached;
@@ -25,6 +25,7 @@ namespace LunyScratch
 		public Boolean IsScheduledForDestruction { get; private set; }
 
 		public IScratchRunner Runner => _owner;
+		public IEngineCamera ActiveCamera => _owner?.ActiveCamera;
 		public IRigidbody Rigidbody
 		{
 			get
@@ -35,7 +36,7 @@ namespace LunyScratch
 				if (!_rigidbodyCached)
 				{
 					var rb = _owner.GetComponent<Rigidbody>();
-					_cachedRigidbody = rb != null ? new UnityRigidbody(rb) : null;
+					_cachedRigidbody = rb != null ? new ScratchRigidbody(rb) : null;
 					_rigidbodyCached = true;
 				}
 				return _cachedRigidbody;
@@ -51,28 +52,28 @@ namespace LunyScratch
 
 				if (!_transformCached)
 				{
-					_cachedTransform = new UnityTransform(_owner.transform);
+					_cachedTransform = new ScratchTransform(_owner.transform);
 					_transformCached = true;
 				}
 				return _cachedTransform;
 			}
 		}
 
-		public IEngineAudio Audio
+		public IEngineAudioSource Audio
 		{
 			get
 			{
 				if (!_audioCached)
 				{
 					var src = _owner.GetComponent<AudioSource>();
-					_cachedAudio = src != null ? new UnityEngineAudio(src) : null;
+					_cachedAudio = src != null ? new ScratchAudioSource(src) : null;
 					_audioCached = true;
 				}
 				return _cachedAudio;
 			}
 		}
 
-		public IEngineObject Self => _self ??= new UnityGameObject(_owner.gameObject);
+		public IEngineObject Self => _self ??= new ScratchGameObject(_owner.gameObject);
 
 		public ScratchBehaviourContext(ScratchBehaviour owner) => _owner = owner;
 
@@ -125,7 +126,7 @@ namespace LunyScratch
 			// Cache and return
 			if (childTransform != null)
 			{
-				var engineObject = new UnityGameObject(childTransform.gameObject);
+				var engineObject = new ScratchGameObject(childTransform.gameObject);
 				_childrenByName[childName] = engineObject;
 				return engineObject;
 			}

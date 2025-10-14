@@ -1,4 +1,5 @@
 using System;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace LunyScratch
@@ -25,6 +26,15 @@ namespace LunyScratch
 		{
 			get => _scratchMenu == null ? _scratchMenu = TryFindSingletonComponentInScene<ScratchMenu>() : _scratchMenu;
 			set => _scratchMenu = value;
+		}
+		public ScratchCamera ActiveCamera
+		{
+			get
+			{
+				var brain = Camera.main != null ? Camera.main.GetComponent<CinemachineBrain>() : null;
+				var vcam = brain != null ? brain.ActiveVirtualCamera as CinemachineCamera : null;
+				return vcam != null ? new ScratchCamera(vcam) : null;
+			}
 		}
 
 		// IScratchRunner implementation

@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace LunyScratch
 {
-	internal sealed class UnityRigidbody : IRigidbody
+	internal sealed class ScratchRigidbody : IRigidbody
 	{
 		private readonly Rigidbody _rigidbody;
 
-		public IVector3 LinearVelocity => new UnityVector3(_rigidbody.linearVelocity);
-		public IVector3 AngularVelocity => new UnityVector3(_rigidbody.angularVelocity);
-		public IVector3 Position => new UnityVector3(_rigidbody.position);
-		public IVector3 Forward => new UnityVector3(_rigidbody.transform.forward);
+		public IVector3 LinearVelocity => new ScratchVector3(_rigidbody.linearVelocity);
+		public IVector3 AngularVelocity => new ScratchVector3(_rigidbody.angularVelocity);
+		public IVector3 Position => new ScratchVector3(_rigidbody.position);
+		public IVector3 Forward => new ScratchVector3(_rigidbody.transform.forward);
 
-		public UnityRigidbody(Rigidbody rigidbody) => _rigidbody = rigidbody;
+		public ScratchRigidbody(Rigidbody rigidbody) => _rigidbody = rigidbody;
 
 		public void SetLinearVelocity(Single x, Single y, Single z) => _rigidbody.linearVelocity = new Vector3(x, y, z);
 

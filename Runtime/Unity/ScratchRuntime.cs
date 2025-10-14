@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,7 @@ namespace LunyScratch
 		private static Boolean s_Initialized;
 
 		public static ScratchRuntime Singleton => s_Instance;
+
 
 #if UNITY_EDITOR
 		// required reset for 'disabled domain reload'
@@ -41,7 +43,7 @@ namespace LunyScratch
 			DontDestroyOnLoad(go);
 
 			// Load AssetRegistry from Resources and pass it to GameEngine
-			var registry = Resources.Load<UnityAssetRegistry>("AssetRegistry");
+			var registry = Resources.Load<ScratchAssetRegistry>("AssetRegistry");
 			GameEngine.Initialize(s_Instance, new UnityActions(), registry);
 
 			SceneManager.activeSceneChanged += OnActiveSceneChanged;

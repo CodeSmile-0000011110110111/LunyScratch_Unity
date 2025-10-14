@@ -57,16 +57,16 @@ namespace LunyScratch.Editor
 		{
 			TryCreateFolders();
 
-			var registry = AssetDatabase.LoadAssetAtPath<UnityAssetRegistry>(RegistryAssetPath);
+			var registry = AssetDatabase.LoadAssetAtPath<ScratchAssetRegistry>(RegistryAssetPath);
 			if (registry == null)
 			{
-				registry = ScriptableObject.CreateInstance<UnityAssetRegistry>();
+				registry = ScriptableObject.CreateInstance<ScratchAssetRegistry>();
 				AssetDatabase.CreateAsset(registry, RegistryAssetPath);
 			}
 
-			var prefabItems = new List<(String path, UnityPrefabAsset asset)>();
-			var uiItems = new List<(String path, UnityUIAsset asset)>();
-			var audioItems = new List<(String path, UnityAudioAsset asset)>();
+			var prefabItems = new List<(String path, ScratchPrefabAsset asset)>();
+			var uiItems = new List<(String path, ScratchUIAsset asset)>();
+			var audioItems = new List<(String path, ScratchAudioAsset asset)>();
 
 			// Prefabs (GameObjects)
 			foreach (var guid in AssetDatabase.FindAssets("t:GameObject", new[] { RootFolder }))
@@ -76,7 +76,7 @@ namespace LunyScratch.Editor
 				if (go != null)
 				{
 					var path = NormalizePath(fullPath);
-					prefabItems.Add((path, new UnityPrefabAsset(go)));
+					prefabItems.Add((path, new ScratchPrefabAsset(go)));
 				}
 			}
 
@@ -88,7 +88,7 @@ namespace LunyScratch.Editor
 				if (ui != null)
 				{
 					var path = NormalizePath(fullPath);
-					uiItems.Add((path, new UnityUIAsset(ui)));
+					uiItems.Add((path, new ScratchUIAsset(ui)));
 				}
 			}
 
@@ -100,7 +100,7 @@ namespace LunyScratch.Editor
 				if (clip != null)
 				{
 					var path = NormalizePath(fullPath);
-					audioItems.Add((path, new UnityAudioAsset(clip)));
+					audioItems.Add((path, new ScratchAudioAsset(clip)));
 				}
 			}
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LunyScratch
 {
-	internal struct UnityVector3 : IVector3
+	internal struct ScratchVector3 : IVector3
 	{
 		private Vector3 _value;
 
@@ -11,11 +11,11 @@ namespace LunyScratch
 		public Single Y { get => _value.y; set => _value.y = value; }
 		public Single Z { get => _value.z; set => _value.z = value; }
 
-		public UnityVector3(Vector3 value) => _value = value;
+		public ScratchVector3(Vector3 value) => _value = value;
 
 		public Vector3 ToUnity() => _value;
 
-		public static implicit operator UnityVector3(Vector3 v) => new(v);
-		public static implicit operator Vector3(UnityVector3 v) => v._value;
+		public static implicit operator ScratchVector3(Vector3 v) => new(v);
+		public static implicit operator Vector3(ScratchVector3 v) => v._value;
 	}
 }
