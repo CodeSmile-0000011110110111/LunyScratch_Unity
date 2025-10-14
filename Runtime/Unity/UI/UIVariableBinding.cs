@@ -23,9 +23,9 @@ internal sealed class UIVariableBinding
 		if (_element is Label label)
 		{
 			if (variable.IsNumber)
-				label.text = variable.AsNumber().ToString("N0");
+				label.text = variable.Number.ToString("N0");
 			else
-				label.text = variable.AsString();
+				label.text = variable.String;
 		}
 		else
 			Debug.LogWarning($"Unsupported UI element type: {_element.GetType()}");
