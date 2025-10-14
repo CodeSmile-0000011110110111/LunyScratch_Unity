@@ -45,8 +45,9 @@ namespace LunyScratch
 			_boundVariables.Clear();
 		}
 
-		public void BindVariable(String elementName, Variable variable)
+		public void BindVariable(Variable variable)
 		{
+			var elementName = variable.Name;
 			if (variable == null)
 			{
 				Debug.LogError($"Variable for {elementName} is null");
