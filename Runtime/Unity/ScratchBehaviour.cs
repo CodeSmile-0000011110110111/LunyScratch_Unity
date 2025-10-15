@@ -10,13 +10,14 @@ namespace LunyScratch
 	/// </summary>
 	public abstract class ScratchBehaviour : MonoBehaviour, IScratchRunner
 	{
-		private readonly Table _variables = new();
+		private protected readonly Table _variables = new();
 		private BlockRunner _runner;
 		private ScratchBehaviourContext _context;
 		private ScratchHUD _scratchHUD;
 		private ScratchMenu _scratchMenu;
 
 		public Table Variables => _variables;
+		public Table GlobalVariables => ScratchRuntime.Singleton.Variables; // redirect to runtime's Variables override
 		public ScratchHUD HUD
 		{
 			get => _scratchHUD == null ? _scratchHUD = TryFindSingletonComponentInScene<ScratchHUD>() : _scratchHUD;

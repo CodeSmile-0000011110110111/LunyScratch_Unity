@@ -18,6 +18,9 @@ namespace LunyScratch
 
 		public static ScratchRuntime Singleton => s_Instance;
 
+		// hide ScratchBehaviour's GlobalVariables or else stackoverflow
+		public new Table GlobalVariables => _variables;
+
 
 #if UNITY_EDITOR
 		// required reset for 'disabled domain reload'
