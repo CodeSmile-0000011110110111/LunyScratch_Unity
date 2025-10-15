@@ -8,6 +8,7 @@ namespace LunyScratch
 	/// Base class for all Scratch-style behaviors.
 	/// Provides local block execution context for the GameObject it's attached to.
 	/// </summary>
+	[Serializable] // required for Rider to not mark all subclasses' [SerializeField] as "redundant" (RIDER-18729)
 	public abstract class ScratchBehaviour : MonoBehaviour, IScratchRunner
 	{
 		private protected readonly Table _variables = new();
