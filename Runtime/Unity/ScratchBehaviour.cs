@@ -1,5 +1,4 @@
 using System;
-using Unity.Cinemachine;
 using UnityEngine;
 
 namespace LunyScratch
@@ -21,23 +20,15 @@ namespace LunyScratch
 		public Table GlobalVariables => ScratchRuntime.Singleton.Variables; // redirect to runtime's Variables override
 		public ScratchHUD HUD
 		{
-			get => _scratchHUD == null ? _scratchHUD = TryFindSingletonComponentInScene<ScratchHUD>() : _scratchHUD;
-			set => _scratchHUD = value;
+			get => ScratchRuntime.Singleton.HUD;
+			set => ScratchRuntime.Singleton.HUD = value;
 		}
 		public ScratchMenu Menu
 		{
-			get => _scratchMenu == null ? _scratchMenu = TryFindSingletonComponentInScene<ScratchMenu>() : _scratchMenu;
-			set => _scratchMenu = value;
+			get => ScratchRuntime.Singleton.Menu;
+			set => ScratchRuntime.Singleton.Menu = value;
 		}
-		public ScratchCamera ActiveCamera
-		{
-			get
-			{
-				var brain = Camera.main != null ? Camera.main.GetComponent<CinemachineBrain>() : null;
-				var vcam = brain != null ? brain.ActiveVirtualCamera as CinemachineCamera : null;
-				return vcam != null ? new ScratchCamera(vcam) : null;
-			}
-		}
+		public ScratchCamera ActiveCamera => ScratchRuntime.Singleton.ActiveCamera;
 
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _runner.AddBlock(Blocks.Sequence(blocks));
@@ -63,27 +54,21 @@ namespace LunyScratch
 		{
 			_context = this is ScratchRuntime ? new ScratchRuntimeContext(this) : new ScratchBehaviourContext(this);
 			_runner = new BlockRunner(_context);
-			OnBehaviourAwake();
+			OnCreateComponent();
 		}
+
+		private void Start() {}
 
 		private void FixedUpdate()
 		{
 			_runner.ProcessPhysicsUpdate(Time.fixedDeltaTime);
-			OnFixedUpdate(Time.fixedDeltaTime);
-		}
-
-		protected virtual void OnFixedUpdate(Single fixedDeltaTime)
-		{
+			OnFixedStep(Time.fixedDeltaTime);
 		}
 
 		private void Update()
 		{
 			_runner.ProcessUpdate(Time.deltaTime);
 			OnUpdate(Time.deltaTime);
-		}
-
-		protected virtual void OnUpdate(Single deltaTime)
-		{
 		}
 
 		private void LateUpdate()
@@ -98,15 +83,11 @@ namespace LunyScratch
 			OnLateUpdate();
 		}
 
-		protected virtual void OnLateUpdate()
-		{
-		}
-
 		private void OnDestroy()
 		{
 			_runner.Dispose();
 			_context.Dispose();
-			OnBehaviourDestroy();
+			OnDestroyComponent();
 		}
 
 		private void OnCollisionEnter(Collision other) => _context?.EnqueueCollisionEnter(other.gameObject);
@@ -114,27 +95,15 @@ namespace LunyScratch
 		/// <summary>
 		/// Override this instead of Awake to handle initialization in derived classes.
 		/// </summary>
-		protected virtual void OnBehaviourAwake() {}
+		protected virtual void OnCreateComponent() {}
 
 		/// <summary>
 		/// Override this instead of OnDestroy to handle cleanup in derived classes.
 		/// </summary>
-		protected virtual void OnBehaviourDestroy() {}
+		protected virtual void OnDestroyComponent() {}
 
-		protected T TryFindSingletonComponentInScene<T>() where T : Component
-		{
-			var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-			if (components.Length > 0)
-			{
-				var moreThanOne = components.Length > 1;
-				if (moreThanOne)
-					Debug.LogWarning($"More than one {nameof(T)} found in scene");
-
-				return components[0];
-			}
-
-			Debug.LogError($"No {nameof(T)} found in scene");
-			return null;
-		}
+		protected virtual void OnFixedStep(Single fixedDeltaTime) {}
+		protected virtual void OnUpdate(Single deltaTime) {}
+		protected virtual void OnLateUpdate() {}
 	}
 }
