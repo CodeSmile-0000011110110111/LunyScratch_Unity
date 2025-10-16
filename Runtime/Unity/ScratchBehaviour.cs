@@ -57,7 +57,7 @@ namespace LunyScratch
 			OnCreateComponent();
 		}
 
-		private void Start() {}
+		private void Start() => OnComponentReady();
 
 		private void FixedUpdate()
 		{
@@ -96,6 +96,8 @@ namespace LunyScratch
 		/// Override this instead of Awake to handle initialization in derived classes.
 		/// </summary>
 		protected virtual void OnCreateComponent() {}
+
+		protected virtual void OnComponentReady() {}
 
 		/// <summary>
 		/// Override this instead of OnDestroy to handle cleanup in derived classes.

@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace LunyScratch
 {
-	internal sealed partial class UnityActions
+	internal sealed partial class UnityActions : IEngineActions
 	{
 		public void ReloadCurrentScene()
 		{
