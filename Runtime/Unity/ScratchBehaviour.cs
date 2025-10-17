@@ -54,10 +54,10 @@ namespace LunyScratch
 		{
 			_context = this is ScratchRuntime ? new ScratchRuntimeContext(this) : new ScratchBehaviourContext(this);
 			_runner = new BlockRunner(_context);
-			OnCreateComponent();
+			OnScratchCreate();
 		}
 
-		private void Start() => OnComponentReady();
+		private void Start() => OnScratchReady();
 
 		private void FixedUpdate()
 		{
@@ -87,7 +87,7 @@ namespace LunyScratch
 		{
 			_runner.Dispose();
 			_context.Dispose();
-			OnDestroyComponent();
+			OnScratchDestroy();
 		}
 
 		private void OnCollisionEnter(Collision other) => _context?.EnqueueCollisionEnter(other.gameObject);
@@ -95,14 +95,14 @@ namespace LunyScratch
 		/// <summary>
 		/// Override this instead of Awake to handle initialization in derived classes.
 		/// </summary>
-		protected virtual void OnCreateComponent() {}
+		protected virtual void OnScratchCreate() {}
 
-		protected virtual void OnComponentReady() {}
+		protected virtual void OnScratchReady() {}
 
 		/// <summary>
 		/// Override this instead of OnDestroy to handle cleanup in derived classes.
 		/// </summary>
-		protected virtual void OnDestroyComponent() {}
+		protected virtual void OnScratchDestroy() {}
 
 		protected virtual void OnFixedStep(Single fixedDeltaTime) {}
 		protected virtual void OnUpdate(Single deltaTime) {}

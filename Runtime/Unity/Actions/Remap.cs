@@ -1,4 +1,7 @@
-﻿namespace LunyScratch
+﻿using System;
+using UnityEngine.InputSystem;
+
+namespace LunyScratch
 {
 	internal sealed class Remap
 	{
@@ -96,6 +99,16 @@
 			Key.NumpadDivide => UnityEngine.InputSystem.Key.NumpadDivide,
 
 			var _ => UnityEngine.InputSystem.Key.None,
+		};
+
+		internal static Boolean ToInputSystemMouseButton(MouseButton button, Mouse mouse) => button switch
+		{
+			MouseButton.Left => mouse.leftButton.isPressed,
+			MouseButton.Right => mouse.rightButton.isPressed,
+			MouseButton.Middle => mouse.middleButton.isPressed,
+			MouseButton.Forward => mouse.forwardButton.isPressed,
+			MouseButton.Back => mouse.backButton.isPressed,
+			var _ => false,
 		};
 	}
 }

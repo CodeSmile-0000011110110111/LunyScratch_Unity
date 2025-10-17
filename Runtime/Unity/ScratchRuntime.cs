@@ -99,7 +99,7 @@ namespace LunyScratch
 			return null;
 		}
 
-		protected override void OnDestroyComponent()
+		protected override void OnScratchDestroy()
 		{
 			SceneManager.activeSceneChanged -= OnActiveSceneChanged;
 			SceneManager.sceneUnloaded -= OnSceneUnloaded;
